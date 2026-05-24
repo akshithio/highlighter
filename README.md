@@ -12,15 +12,6 @@ A small browser extension for highlighting text and keeping private comments on 
 
 ![highlighter project demo](./assets/highlighter-demo.png)
 
-## Install
-
-Download the Chrome package, unzip it, then:
-
-1. Open `chrome://extensions`.
-2. Enable Developer mode.
-3. Click Load unpacked.
-4. Select the unzipped `highlighter` folder.
-
 ## Use
 
 Select text on a webpage, then choose Highlight or Comment from the small toolbar. Click any highlight to edit its comment, change its color, or delete it. The extension popup shows all highlights for the current page, can clear them, and can disable highlighter on the current domain.
