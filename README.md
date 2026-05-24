@@ -16,8 +16,6 @@ A small browser extension for highlighting text and keeping private comments on 
 
 Select text on a webpage, then choose Highlight or Comment from the small toolbar. Click any highlight to edit its comment, change its color, or delete it. The extension popup shows all highlights for the current page, can clear them, and can disable highlighter on the current domain.
 
-For local files, enable Allow access to file URLs for the extension from `chrome://extensions`.
-
 ## Privacy
 
 Privacy policy: https://akshith.io/highlighter-privacy-policy
