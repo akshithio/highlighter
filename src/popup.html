@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>highlighter</title>
+    <link rel="stylesheet" href="popup.css">
+  </head>
+  <body>
+    <header>
+      <h1>highlighter</h1>
+      <span id="count">0</span>
+    </header>
+
+    <main>
+      <div id="empty">Select text on the page, then use the floating toolbar or right-click menu.</div>
+      <ol id="notes"></ol>
+    </main>
+
+    <footer>
+      <button id="domain-toggle" type="button">Disable on this domain</button>
+      <button id="clear" type="button">Clear page</button>
+    </footer>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

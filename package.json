@@ -1,0 +1,21 @@
+{
+  "name": "highlighter",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "npm run build:js && npm run build:css && npm run build:html",
+    "build:js": "esbuild src/content.ts src/background.ts src/popup.ts --bundle --outdir=dist --format=iife --target=chrome120",
+    "build:css": "tailwindcss -i src/styles/content.css -o dist/content.css && tailwindcss -i src/styles/popup.css -o dist/popup.css",
+    "build:html": "node scripts/copy-popup.mjs",
+    "check": "tsc --noEmit",
+    "package": "sh scripts/package-extension.sh",
+    "prepare": "git config core.hooksPath .githooks 2>/dev/null || true"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.268",
+    "esbuild": "^0.23.1",
+    "tailwindcss": "^3.4.19",
+    "typescript": "^5.9.3"
+  }
+}
