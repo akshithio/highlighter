@@ -3,7 +3,7 @@
   "name": "highlighter",
   "description": "Highlight text and keep private notes on webpages using local browser storage.",
   "version": "0.2.0",
-  "permissions": ["activeTab", "contextMenus", "scripting", "storage"],
+  "permissions": ["contextMenus", "scripting", "storage"],
   "optional_host_permissions": ["<all_urls>"],
   "icons": {
     "16": "assets/icon-16.png",
