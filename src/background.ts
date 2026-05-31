@@ -3,6 +3,8 @@ export {};
 const MENU_HIGHLIGHT = "page-notes-highlight-selection";
 const MENU_COMMENT = "page-notes-comment-selection";
 const DISABLED_HOSTS_KEY = "pageNotesDisabledHosts";
+const CONTENT_SCRIPT_ID = "page-notes-all-sites";
+const ALL_SITES = "<all_urls>";
 
 function createMenus() {
   chrome.contextMenus.removeAll(() => {
@@ -22,6 +24,27 @@ function createMenus() {
 
 chrome.runtime.onInstalled.addListener(createMenus);
 chrome.runtime.onStartup.addListener(createMenus);
+
+async function hasAllSitesAccess() {
+  return chrome.permissions.contains({ origins: [ALL_SITES] });
+}
+
+async function unregisterContentScript() {
+  await chrome.scripting.unregisterContentScripts({ ids: [CONTENT_SCRIPT_ID] }).catch(() => {});
+}
+
+async function registerContentScript() {
+  await unregisterContentScript();
+  await chrome.scripting.registerContentScripts([
+    {
+      id: CONTENT_SCRIPT_ID,
+      matches: [ALL_SITES],
+      js: ["dist/content.js"],
+      css: ["dist/katex.content.css", "dist/content.css"],
+      runAt: "document_idle"
+    }
+  ]);
+}
 
 function canRunOnTab(tab) {
   return Boolean(tab?.id && /^https?:|^file:/.test(tab.url || ""));
@@ -46,7 +69,7 @@ async function isDomainDisabled(tab) {
 async function ensureContentScript(tabId) {
   await chrome.scripting.insertCSS({
     target: { tabId },
-    files: ["dist/content.css"]
+    files: ["dist/katex.content.css", "dist/content.css"]
   });
 
   await chrome.scripting.executeScript({
@@ -54,6 +77,58 @@ async function ensureContentScript(tabId) {
     files: ["dist/content.js"]
   });
 }
+
+async function injectIntoOpenTabs() {
+  const tabs = await chrome.tabs.query({});
+
+  await Promise.all(
+    tabs.filter(canRunOnTab).map(async (tab) => {
+      if (!tab.id) return;
+      if (await isDomainDisabled(tab)) return;
+
+      try {
+        await ensureContentScript(tab.id);
+      } catch {
+        // Browsers block extension scripts on internal and protected pages.
+      }
+    })
+  );
+}
+
+chrome.runtime.onInstalled.addListener(() => {
+  syncAllSitesAccess().catch(() => {});
+});
+
+chrome.runtime.onStartup.addListener(() => {
+  syncAllSitesAccess().catch(() => {});
+});
+
+async function syncAllSitesAccess() {
+  if (!(await hasAllSitesAccess())) {
+    await unregisterContentScript();
+    return;
+  }
+
+  await registerContentScript();
+  await injectIntoOpenTabs();
+}
+
+chrome.permissions.onRemoved.addListener(() => {
+  syncAllSitesAccess().catch(() => {});
+});
+
+chrome.permissions.onAdded.addListener(() => {
+  syncAllSitesAccess().catch(() => {});
+});
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message?.type !== "PAGE_NOTES_ENABLE_ALL_SITES") return false;
+
+  syncAllSitesAccess()
+    .then(() => sendResponse({ ok: true }))
+    .catch(() => sendResponse({ ok: false }));
+  return true;
+});
 
 async function sendCommand(tab, message) {
   if (!canRunOnTab(tab)) return;

@@ -1,13 +1,19 @@
 export {};
 
+import { renderComment } from "./render-math";
+
 (() => {
   const STORE_KEY = "pageNotes";
   const DISABLED_HOSTS_KEY = "pageNotesDisabledHosts";
   const HIGHLIGHT_CLASS = "page-notes-highlight";
   const UI_ROOT_CLASS = "page-notes-ui";
-  const CONTENT_VERSION = "0.2.2";
+  const CONTENT_VERSION = "0.3.0";
   if (window.__pageNotesLoaded === CONTENT_VERSION) return;
   document.querySelectorAll(`.${UI_ROOT_CLASS}`).forEach((node) => node.remove());
+  document.querySelectorAll(`.${HIGHLIGHT_CLASS}`).forEach((node) => {
+    node.replaceWith(document.createTextNode(node.textContent || ""));
+  });
+  document.body?.normalize();
   window.__pageNotesLoaded = CONTENT_VERSION;
 
   const DEFAULT_COLOR = "#fff176";
@@ -546,7 +552,7 @@ export {};
       card.className = "page-notes-side-card";
       card.dataset.pageNotesId = highlight.id;
       card.style.setProperty("--page-notes-highlight-color", highlight.color || DEFAULT_COLOR);
-      card.textContent = highlight.note;
+      renderComment(card, highlight.note);
 
       const hasCustomPosition = typeof highlight.sideOffsetLeft === "number" && typeof highlight.sideOffsetTop === "number";
       if (hasCustomPosition) {

@@ -14,7 +14,15 @@ A small browser extension for highlighting text and keeping private comments on 
 
 ## Use
 
-Select text on a webpage, then choose Highlight or Comment from the small toolbar. Click any highlight to edit its comment, change its color, or delete it. The extension popup shows all highlights for the current page, can clear them, and can disable highlighter on the current domain.
+Select text on a webpage, then choose Highlight or Comment from the small toolbar. Click any highlight to edit its comment, change its color, or delete it. Comments support LaTeX with `$...$` for inline math and `$$...$$` for display math. The extension popup shows all highlights for the current page, can clear them, and can disable highlighter on the current domain.
+
+## Permissions
+
+The extension does not request webpage access during installation. Open the extension once and choose Allow webpage access to enable the toolbar and restore saved highlights automatically across sites. Notes and highlights remain in local browser storage and are not sent to a server.
+
+## Arc
+
+Arc desktop supports Chrome extensions. Install the published extension from the Chrome Web Store, or load this folder locally from `arc://extensions` with Developer mode enabled.
 
 ## Privacy
 

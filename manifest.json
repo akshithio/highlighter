@@ -2,9 +2,9 @@
   "manifest_version": 3,
   "name": "highlighter",
   "description": "Highlight text and keep private notes on webpages using local browser storage.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "permissions": ["activeTab", "contextMenus", "scripting", "storage"],
-  "host_permissions": ["<all_urls>"],
+  "optional_host_permissions": ["<all_urls>"],
   "icons": {
     "16": "assets/icon-16.png",
     "32": "assets/icon-32.png",
@@ -24,12 +24,10 @@
     "default_popup": "dist/popup.html",
     "default_title": "highlighter"
   },
-  "content_scripts": [
+  "web_accessible_resources": [
     {
-      "matches": ["<all_urls>"],
-      "js": ["dist/content.js"],
-      "css": ["dist/content.css"],
-      "run_at": "document_idle"
+      "resources": ["dist/fonts/*"],
+      "matches": ["<all_urls>"]
     }
   ]
 }

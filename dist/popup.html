@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>highlighter</title>
+    <link rel="stylesheet" href="katex.min.css">
     <link rel="stylesheet" href="popup.css">
   </head>
   <body>
@@ -12,12 +13,19 @@
       <span id="count">0</span>
     </header>
 
-    <main>
+    <section id="onboarding" hidden>
+      <h2>Enable highlighting</h2>
+      <p>Allow access to webpages so highlighter can show the toolbar when you select text and restore your saved highlights automatically.</p>
+      <button id="enable-access" type="button">Allow webpage access</button>
+      <p id="access-status" role="status"></p>
+    </section>
+
+    <main id="notes-main">
       <div id="empty">Select text on the page, then use the floating toolbar or right-click menu.</div>
       <ol id="notes"></ol>
     </main>
 
-    <footer>
+    <footer id="notes-footer">
       <button id="domain-toggle" type="button">Disable on this domain</button>
       <button id="clear" type="button">Clear page</button>
     </footer>

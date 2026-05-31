@@ -24,6 +24,12 @@ h1 {
   line-height: 1.2;
 }
 
+h2 {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.2;
+}
+
 #count {
   min-width: 24px;
   height: 24px;
@@ -40,6 +46,27 @@ h1 {
 main {
   max-height: 380px;
   overflow: auto;
+}
+
+#onboarding {
+  padding: 18px 14px;
+}
+
+#onboarding p {
+  margin: 8px 0 14px;
+}
+
+#onboarding[hidden],
+  #notes-main[hidden],
+  #notes-footer[hidden],
+  #count[hidden] {
+  display: none;
+}
+
+#access-status {
+  min-height: 16px;
+  margin-bottom: 0;
+  color: #b3261e;
 }
 
 #empty {

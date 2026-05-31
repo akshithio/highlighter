@@ -1,16 +1,35 @@
 export {};
 
+import { renderComment } from "./render-math";
+
 const notesEl = document.querySelector("#notes") as HTMLOListElement;
 const emptyEl = document.querySelector("#empty") as HTMLDivElement;
 const countEl = document.querySelector("#count") as HTMLSpanElement;
 const domainToggleButton = document.querySelector("#domain-toggle") as HTMLButtonElement;
 const clearButton = document.querySelector("#clear") as HTMLButtonElement;
+const onboardingEl = document.querySelector("#onboarding") as HTMLElement;
+const notesMainEl = document.querySelector("#notes-main") as HTMLElement;
+const notesFooterEl = document.querySelector("#notes-footer") as HTMLElement;
+const enableAccessButton = document.querySelector("#enable-access") as HTMLButtonElement;
+const accessStatusEl = document.querySelector("#access-status") as HTMLParagraphElement;
 const DISABLED_HOSTS_KEY = "pageNotesDisabledHosts";
+const ALL_SITES = "<all_urls>";
 
 let currentPage = null;
 let activeTabId = null;
 let activeDomain = "";
 let domainDisabled = false;
+
+async function hasAllSitesAccess() {
+  return chrome.permissions.contains({ origins: [ALL_SITES] });
+}
+
+function setOnboardingVisible(visible) {
+  onboardingEl.hidden = !visible;
+  notesMainEl.hidden = visible;
+  notesFooterEl.hidden = visible;
+  countEl.hidden = visible;
+}
 
 function getDomain(url) {
   try {
@@ -54,7 +73,7 @@ async function ensureContentScript() {
 
   await chrome.scripting.insertCSS({
     target: { tabId: tab.id },
-    files: ["dist/content.css"]
+    files: ["dist/katex.content.css", "dist/content.css"]
   });
 
   await chrome.scripting.executeScript({
@@ -89,7 +108,7 @@ function render(highlights) {
     const note = document.createElement("p");
 
     quote.textContent = highlight.text;
-    note.textContent = highlight.note || "No comment";
+    renderComment(note, highlight.note || "No comment");
 
     item.append(quote, note);
     notesEl.append(item);
@@ -97,6 +116,13 @@ function render(highlights) {
 }
 
 async function refresh() {
+  if (!(await hasAllSitesAccess())) {
+    currentPage = null;
+    setOnboardingVisible(true);
+    return;
+  }
+
+  setOnboardingVisible(false);
   try {
     await getActiveTab();
     domainDisabled = activeDomain ? (await getDisabledHosts()).includes(activeDomain) : false;
@@ -123,6 +149,27 @@ async function refresh() {
     }
   }
 }
+
+enableAccessButton.addEventListener("click", async () => {
+  enableAccessButton.disabled = true;
+  accessStatusEl.textContent = "";
+
+  try {
+    const granted = await chrome.permissions.request({ origins: [ALL_SITES] });
+    if (!granted) {
+      accessStatusEl.textContent = "Webpage access was not enabled.";
+      return;
+    }
+
+    const result = await chrome.runtime.sendMessage({ type: "PAGE_NOTES_ENABLE_ALL_SITES" });
+    if (!result?.ok) throw new Error("Unable to register webpage access");
+    await refresh();
+  } catch {
+    accessStatusEl.textContent = "Webpage access could not be enabled.";
+  } finally {
+    enableAccessButton.disabled = false;
+  }
+});
 
 domainToggleButton.addEventListener("click", async () => {
   await getActiveTab();

@@ -224,7 +224,9 @@
     padding: 8px;
     border: 1px solid #ccd6dd;
     border-radius: 6px;
+    background: #ffffff;
     color: #172026;
+    caret-color: #172026;
     font: 13px/1.4 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   }
 
